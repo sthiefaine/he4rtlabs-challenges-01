@@ -1,10 +1,5 @@
 var app = {
 
-    //Data de mes possibles erreurs de formulaire
-    data_errors : {
-        'name_short' : 'Votre identifiant est trop court.',
-    },
-
     errors: [],
 
     // Initialisation du module
