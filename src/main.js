@@ -31,27 +31,11 @@ var app = {
 
  
     displayErrors: function () {
-        console.log(app.errors);
+  
 
-         console.log('ici');
-        if (app.errors.length > 0) {
-            // Notre element
-            let errorsElement = document.querySelector('#errors');
-            
-            // On boucle sur les erreurs
-            for (index in app.errors) {
-                // On ajoute un paragraphe p avec le messages, dans la div #errors
-                errorsElement.innerHTML += '<p>' + app.data_errors[app.errors[index]] + '</p>';
-            }
-
-        }else{
-
-
-        }
     },
 
     displayErrorsBorder: function(inputField){
-
 
         //return event.target.style.border = '2px solid red'; 
         inputField.classList.add('invalid');
@@ -60,7 +44,47 @@ var app = {
         // https://developer.mozilla.org/en-US/docs/Web/API/Element/className
         // https://developer.mozilla.org/en-US/docs/Web/API/Element/classList
 
+
+        let key = inputField.id;
+
+        if(app.errors[key] !=''){
+            console.log('erreur trouvée');
+            console.log(app.errors[key]);
+     
+            // Notre element
+            let errorsElement = document.querySelector('#'+key+'Error');
+            // on supprime le message d'erreur precedent
+            errorsElement.innerHTML = '';
+
+            // On affiche notre erreur
+            errorsElement.innerHTML += '<strong>' + app.errors[key]+ '</strong>';
+
+        }else{
+
+        }
+
     },
+
+
+    displayValidBorder: function(inputField){
+
+        inputField.classList.remove('invalid');
+        inputField.classList.add('valid');
+        
+        let key = inputField.id;
+
+        console.log('erreur trouvée');
+        console.log(app.errors[key]);
+    
+        // Notre element
+        let errorsElement = document.querySelector('#'+key+'Error');
+
+        // On supprime notre erreur
+        errorsElement.innerHTML = '';
+
+
+    },
+
 
     handleCheckInput: function (event) {
         console.log(event);
@@ -84,59 +108,43 @@ var app = {
             valorProjetoVerif = value;
 
             app.errors[key] = '';
-            valorProjetoVerif = value;
 
             if(Number.isNaN(valorProjetoVerif)){
-
-                app.displayErrorsBorder(inputField);
-
                 app.errors[key] = 'not_a_number';
+                app.displayErrorsBorder(inputField);
 
             }else if(valorProjetoVerif <= 0 ){
 
+                app.errors[key] = 'too_short';
                 app.displayErrorsBorder(inputField);
 
-                app.errors[key] = 'too_short';
-
             }else{
-
-                inputField.classList.add('valid');
-                inputField.classList.remove('invalid');
+                app.displayValidBorder(inputField);
             }
             
-
         }else if(key == 'horasDiarias'){
-
-            app.errors[key] = '';
+            
             horasDiariasVerif = value;
 
+            app.errors[key] = '';
+
             if(Number.isNaN(horasDiariasVerif)){
-
-                app.displayErrorsBorder(inputField);
-
                 app.errors[key] = 'not_a_number';
+                app.displayErrorsBorder(inputField);
 
             }else if(horasDiariasVerif <= 0 ){
-
-                app.displayErrorsBorder(inputField);
-
                 app.errors[key] = 'too_short';
+                app.displayErrorsBorder(inputField);
 
             }else if(horasDiariasVerif >= 24){
-
+                app.errors[key] = ['too_long'];
                 app.displayErrorsBorder(inputField);
 
-                app.errors[key] = 'too_long';
-
             }else{
+                app.displayValidBorder(inputField);
 
-                inputField.classList.add('valid');
-                inputField.classList.remove('invalid');
             }
             
-        
-
-
         }else if(key == 'diasEfetivos'){
 
             app.errors[key] = '';
@@ -144,26 +152,22 @@ var app = {
 
             if(Number.isNaN(diasEfetivosVerif)){
 
-                app.displayErrorsBorder(inputField);
-
                 app.errors[key] = 'not_a_number';
+                app.displayErrorsBorder(inputField);
 
             }else if(diasEfetivosVerif <= 0 ){
 
-                app.displayErrorsBorder(inputField);
-
                 app.errors[key] = 'too_short';
+                app.displayErrorsBorder(inputField);
 
             }else if(diasEfetivosVerif >= 8){
 
-                app.displayErrorsBorder(inputField);
-
                 app.errors[key] = 'too_long';
+                app.displayErrorsBorder(inputField);
 
             }else{
 
-                inputField.classList.add('valid');
-                inputField.classList.remove('invalid');
+                app.displayValidBorder(inputField);
             }
 
         }else if(key == 'diasFerias'){
@@ -173,38 +177,28 @@ var app = {
 
             if(Number.isNaN(diasFeriasVerif)){
 
-                app.displayErrorsBorder(inputField);
-
                 app.errors[key] = 'not_a_number';
+                app.displayErrorsBorder(inputField);
 
             }else if(diasFeriasVerif < 0 ){
 
-                app.displayErrorsBorder(inputField);
-
                 app.errors[key] = 'too_short';
+                app.displayErrorsBorder(inputField);
 
             }else if(diasFeriasVerif >= 8){
-
-                app.displayErrorsBorder(inputField);
-
+                
                 app.errors[key] = 'too_long';
+                app.displayErrorsBorder(inputField);
 
             }else{
 
-                inputField.classList.add('valid');
-                inputField.classList.remove('invalid');
+                app.displayValidBorder(inputField);
             }
         }
 
         app.displayErrors();
 
-
-
-            console.log('test 1:');
-            console.log(app.errors);
-            console.log('fin test 1:');
-
-
+        
     },
 
 };
