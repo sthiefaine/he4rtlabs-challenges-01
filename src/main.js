@@ -72,9 +72,6 @@ var app = {
         inputField.classList.add('valid');
         
         let key = inputField.id;
-
-        console.log('erreur trouvée');
-        console.log(app.errors[key]);
     
         // Notre element
         let errorsElement = document.querySelector('#'+key+'Error');
@@ -126,7 +123,7 @@ var app = {
             
             horasDiariasVerif = value;
 
-            app.errors[key] = '';
+            app.errors.pop(key);
 
             if(Number.isNaN(horasDiariasVerif)){
                 app.errors[key] = 'not_a_number';
