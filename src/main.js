@@ -4,6 +4,7 @@ var app = {
 
     // Initialisation du module
     // Instructions de départ
+
     init: function () {
         console.log('init app');
 
@@ -11,55 +12,80 @@ var app = {
         valorProjetoField.addEventListener('blur', app.handleCheckInput);
 
         let horasDiariasField = document.querySelector('#horasDiarias');
-        horasDiariasField.addEventListener('blur', app.handleCheckInput);
+        horasDiariasField.addEventListener('change', app.handleCheckInput);
 
         let diasEfetivosField = document.querySelector('#diasEfetivos');
         diasEfetivosField.addEventListener('blur', app.handleCheckInput);
 
         let diasFeriasField = document.querySelector('#diasFerias');
         diasFeriasField.addEventListener('blur', app.handleCheckInput);
-
     },
 
    
     clearErrors: function () {
    
-        app.errors = {};
+        app.errors = [];
 
         document.querySelector('#errors').innerHTML = '';
     },
 
  
     displayErrors: function () {
-  
 
     },
+
+    displayResult: function () {
+
+
+        if(
+            typeof app.errors['valorProjeto'] !== 'undefined'
+            && typeof app.errors['horasDiarias'] !== 'undefined'
+            && typeof app.errors['diasEfetivos'] !== 'undefined'
+            && typeof app.errors['diasFerias'] !== 'undefined'
+            && app.errors['valorProjeto']?.length <= 0 
+            && app.errors['horasDiarias']?.length <= 0 
+            && app.errors['diasEfetivos']?.length <= 0 
+            && app.errors['diasFerias']?.length <= 0
+            ){
+            
+                const valorProjeto = document.querySelector('#valorProjeto').value;
+                const diasEfetivos = document.querySelector('#diasEfetivos').value;
+                const horasDiarias = document.querySelector('#horasDiarias').value;
+                const diasFerias = document.querySelector('#diasFerias').value;
+
+                valorHora = (valorProjeto / (diasEfetivos * 4 * horasDiarias) ) + ( ( diasFerias * diasEfetivos * horasDiarias ) );
+
+                // Element
+                let resultElement = document.querySelector('#result');
+                resultElement.innerHTML = valorHora + ' R$ / hora';
+
+
+        }
+    },
+
 
     displayErrorsBorder: function(inputField){
 
         //return event.target.style.border = '2px solid red'; 
-        inputField.classList.add('invalid');
         inputField.classList.remove('valid');
-
+        inputField.classList.add('invalid');
+       
         // https://developer.mozilla.org/en-US/docs/Web/API/Element/className
         // https://developer.mozilla.org/en-US/docs/Web/API/Element/classList
 
 
         let key = inputField.id;
 
-        if(app.errors[key] !=''){
-            console.log('erreur trouvée');
-            console.log(app.errors[key]);
-     
-            // Notre element
+        if(app.errors[key] !== ''){
+            console.log('found error', app.errors[key]);
+
+            // Element
             let errorsElement = document.querySelector('#'+key+'Error');
-            // on supprime le message d'erreur precedent
+            // delet previous error message
             errorsElement.innerHTML = '';
 
-            // On affiche notre erreur
+            // display error
             errorsElement.innerHTML += '<strong>' + app.errors[key]+ '</strong>';
-
-        }else{
 
         }
 
@@ -73,12 +99,11 @@ var app = {
         
         let key = inputField.id;
     
-        // Notre element
+        // Element
         let errorsElement = document.querySelector('#'+key+'Error');
 
-        // On supprime notre erreur
+        // delet previous error message
         errorsElement.innerHTML = '';
-
 
     },
 
@@ -87,12 +112,12 @@ var app = {
         console.log(event);
         
         let inputField = event.currentTarget;
-        // On appelle la méthode qui vérifie le champ
+        // let's check field
         app.checkField(inputField);
     },
 
-    // Cette fonction se charge de vérifier si le champ est valide
-    // et retourn true ou false en conséquence
+    // this function let check if inputs are correct
+    // push error message if needed
     checkField: function (inputField) {
 
         let key = inputField.id;
@@ -103,9 +128,7 @@ var app = {
         if(key == 'valorProjeto'){
 
             valorProjetoVerif = value;
-
-            app.errors[key] = '';
-
+            app.errors[key] = [];
             if(Number.isNaN(valorProjetoVerif)){
                 app.errors[key] = 'not_a_number';
                 app.displayErrorsBorder(inputField);
@@ -122,44 +145,42 @@ var app = {
         }else if(key == 'horasDiarias'){
             
             horasDiariasVerif = value;
-
-            app.errors.pop(key);
+            app.errors[key] = [];
 
             if(Number.isNaN(horasDiariasVerif)){
-                app.errors[key] = 'not_a_number';
+                app.errors[key].push('not_a_number');
                 app.displayErrorsBorder(inputField);
 
             }else if(horasDiariasVerif <= 0 ){
-                app.errors[key] = 'too_short';
+                app.errors[key].push('too_short');
                 app.displayErrorsBorder(inputField);
 
             }else if(horasDiariasVerif >= 24){
-                app.errors[key] = ['too_long'];
+                app.errors[key].push('too_long');
                 app.displayErrorsBorder(inputField);
 
             }else{
                 app.displayValidBorder(inputField);
 
             }
-            
+
         }else if(key == 'diasEfetivos'){
 
-            app.errors[key] = '';
             diasEfetivosVerif = value;
-
+            app.errors[key] = [];
             if(Number.isNaN(diasEfetivosVerif)){
 
-                app.errors[key] = 'not_a_number';
+                app.errors[key].push('not_a_number');
                 app.displayErrorsBorder(inputField);
 
             }else if(diasEfetivosVerif <= 0 ){
 
-                app.errors[key] = 'too_short';
+                app.errors[key].push('too_short');
                 app.displayErrorsBorder(inputField);
 
             }else if(diasEfetivosVerif >= 8){
 
-                app.errors[key] = 'too_long';
+                app.errors[key].push('too_long');
                 app.displayErrorsBorder(inputField);
 
             }else{
@@ -169,8 +190,9 @@ var app = {
 
         }else if(key == 'diasFerias'){
 
-            app.errors[key] = '';
+
             diasFeriasVerif = value;
+            app.errors[key] = [];
 
             if(Number.isNaN(diasFeriasVerif)){
 
@@ -184,17 +206,20 @@ var app = {
 
             }else if(diasFeriasVerif >= 8){
                 
-                app.errors[key] = 'too_long';
+        
+                app.errors[key].push('too_long');
                 app.displayErrorsBorder(inputField);
 
             }else{
-
                 app.displayValidBorder(inputField);
             }
         }
 
-        app.displayErrors();
+        /* app.displayErrors(); */
 
+        app.displayResult();
+
+       
         
     },
 
